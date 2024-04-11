@@ -3,14 +3,21 @@
     In order to minimize the requirements, it runs only on CPU and images are
     processed one by one.
 """
+import requests
 import torch
 import argparse
 import pickle
+import cv2
+import imutils
+import numpy as np
 from argparse import Namespace
-
 from models.End_ExpansionNet_v2 import End_ExpansionNet_v2
 from utils.image_utils import preprocess_image
 from utils.language_utils import tokens2description
+import threading
+import time
+import torchvision
+from PIL import Image as PIL_Image
 
 
 def main():
