@@ -8,7 +8,6 @@ import torch
 import argparse
 import pickle
 import cv2
-import imutils
 import numpy as np
 from argparse import Namespace
 from models.End_ExpansionNet_v2 import End_ExpansionNet_v2
@@ -18,7 +17,59 @@ import threading
 import time
 import torchvision
 from PIL import Image as PIL_Image
+from sound import speak
 
+global frame
+frame = None
+
+def get_live_feed():
+    global frame
+    # link to camera feed from camera
+    url = "http://192.168.1.157:8080/shot.jpg"
+    cap = cv2.VideoCapture(0)  # 0 is usually the default camera
+
+    # Check if the camera opened successfully
+    if not cap.isOpened():
+        print("Error: Could not open camera.")
+        return
+
+    i = 0
+    while True:
+        img_size = 384
+        img_resp = requests.get(url)
+        img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8)
+        img_arr = cv2.imdecode(img_arr, -1) 
+        # img_rgb = cv2.cvtColor(img_arr, cv2.COLOR_BGR2RGB)
+
+        transf_1 = torchvision.transforms.Compose([torchvision.transforms.Resize((img_size, img_size))])
+        transf_2 = torchvision.transforms.Compose([torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                                                    std=[0.229, 0.224, 0.225])])
+
+        pil_image = PIL_Image.fromarray(img_arr)
+        if pil_image.mode != 'RGB':
+            pil_image = PIL_Image.new("RGB", pil_image.size)
+        preprocess_pil_image = transf_1(pil_image)
+        image = torchvision.transforms.ToTensor()(preprocess_pil_image)
+        image = transf_2(image)
+        
+        img = image.numpy()
+        # img_trans = np.transpose(img, (1, 2, 0))
+        # print(frame.shape)
+        frame = np.transpose(img, (1, 2, 0))
+
+        # Display the resulting frame
+        cv2.imshow('Live Video Feed', frame)
+    
+        # Press 'q' on keyboard to exit the program
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+        i+=1
+
+    # release the video capture object, When everything done
+    # cap.release()
+    cv2.destroyAllWindows()
+    frame = None
 
 def main():
     parser = argparse.ArgumentParser(description='Inference')
