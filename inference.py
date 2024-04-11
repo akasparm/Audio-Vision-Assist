@@ -3,7 +3,6 @@
     In order to minimize the requirements, it runs only on CPU and images are
     processed one by one.
 """
-
 import torch
 import argparse
 import pickle
@@ -14,8 +13,7 @@ from utils.image_utils import preprocess_image
 from utils.language_utils import tokens2description
 
 
-if __name__ == "__main__":
-
+def main():
     parser = argparse.ArgumentParser(description='Inference')
     parser.add_argument('--model_dim', type=int, default=512)
     parser.add_argument('--N_enc', type=int, default=3)
@@ -91,3 +89,6 @@ if __name__ == "__main__":
                             mode='beam_search', **beam_search_kwargs)
         pred = tokens2description(pred[0][0], coco_tokens['idx2word_list'], sos_idx, eos_idx)
         print(path + ' \n\tDescription: ' + pred + '\n')
+
+if __name__ == "__main__":
+    main()
