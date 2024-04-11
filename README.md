@@ -11,4 +11,4 @@ pygame
 ## Outputs
 ![alt text](results/1.jpg)
 ![alt text](results/2.jpg)
-[![Custom Inference - YouTube](https://img.youtube.com/vi/n3DaaLMespQ/65.jpg)](https://www.youtube.com/watch?v=n3DaaLMespQ)
+[![Custom Inference - YouTube](https://img.youtube.com/vi/n3DaaLMespQ/20.jpg)](https://www.youtube.com/watch?v=n3DaaLMespQ)
